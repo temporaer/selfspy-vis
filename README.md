@@ -5,6 +5,14 @@ Install selfspy, then
 
     pip install -r requirements.txt
 
+Usage
+=====
+
+The script is a modified version of the =selfstats= program. The same options
+apply. Try e.g.
+
+    python vis.py
+
 Status
 ======
 
