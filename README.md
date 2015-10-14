@@ -3,7 +3,7 @@ Installation
 
 Install selfspy, then
 
-        pip install -r requirements.txt
+    pip install -r requirements.txt
 
 Status
 ======
@@ -22,12 +22,12 @@ Config
 
 In  =~/.selfspy/simplification_rules.txt=, add rules of the form:
 
-        ^.*Vimperator.*$ --> Browser
-        selfspy : \w+ --> selfspy
-        ^.*Skype.*$ --> Skype
-        ^.*Zimbra.*$ --> Mail
-        ^.*\bmutt\b.*$ --> Mail
-        ^.*\bzsh\b.*$ --> shell
-        ^.*/([\w\-]+\.\w+) \[([\w\-]+)\] --> \2 : \1
+    ^.*Vimperator.*$ --> Browser
+    selfspy : \w+ --> selfspy
+    ^.*Skype.*$ --> Skype
+    ^.*Zimbra.*$ --> Mail
+    ^.*\bmutt\b.*$ --> Mail
+    ^.*\bzsh\b.*$ --> shell
+    ^.*/([\w\-]+\.\w+) \[([\w\-]+)\] --> \2 : \1
 
 to keep descriptions in legends short.
