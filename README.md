@@ -17,25 +17,29 @@ Status
 ======
 
 Currently implemented is a breakdown of hours (stacked bar chart) and a pie
-chart (all time totals). Both plots are shown for clicks and for keypresses.
+chart (all time totals). Both plots are saved for clicks and for keypresses,
+respectively.
 
 It's very likely that long intervals aren't split correctly.
 
 Filtering options of original `selfstats` continue to work.
-
-Saving of plots is not yet implemented.
 
 Config
 ======
 
 In  `~/.selfspy/simplification_rules.txt`, add rules of the form:
 
-    ^.*Vimperator.*$ --> Browser
-    selfspy : \w+ --> selfspy
-    ^.*Skype.*$ --> Skype
-    ^.*Zimbra.*$ --> Mail
-    ^.*\bmutt\b.*$ --> Mail
-    ^.*\bzsh\b.*$ --> shell
-    ^.*/([\w\-]+\.\w+) \[([\w\-]+)\] --> \2 : \1
+    ^\s*::\s*$ --> unknown
+    ^(.+)::\s*$ --> \1
+    ^(.+)::.*$ --> \1
+    # ^(.+)::(\w+).*$ --> \1:\2
+    ^Firefox::.*YouTube.*$ --> Browser (Youtube)
+    ^Firefox::.*GitHub.*$ --> Browser (GitHub)
+    ^Firefox::.*Google Search.*$ --> Browser (search)
+    # ^.*Skype.*$ --> Skype
+    # ^.*Zimbra.*$ --> Mail
+    # ^.*\bmutt\b.*$ --> Mail
+    # ^.*\bzsh\b.*$ --> shell
 
-to keep descriptions in legends short.
+to keep descriptions in legends short and expressive.
+Last matching rule (LHS) wins.

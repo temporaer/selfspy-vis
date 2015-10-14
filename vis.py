@@ -369,16 +369,32 @@ class Selfstats:
             else:
                 Lt[p] = s
 
+        def make_others(D, n=9):
+            keys = list(x for x in D.keys())
+            keys = sorted(keys, key=lambda x: D[x].sum(), reverse=True)
+            keys = keys[:n]
+            D2 = D[keys]
+
+            D2['other'] = D[[t for t in D.keys()
+                             if t not in keys]].sum()
+            return D2
+
         #from IPython.core.debugger import Tracer; Tracer()()
         df = pd.DataFrame(L, index=idx)
+        df = make_others(df[unit])
         df.plot.pie(y=unit)
+        plt.savefig(unit + "-total.png")
+        plt.clf()
 
         Lt = [pd.DataFrame({k:v}) for k, v in Lt.iteritems()]
         df = pd.concat(Lt, axis=0)
         df = df.resample('H', how='sum', label='left')
+        df = make_others(df)
         df.plot.bar(stacked=True)
+        plt.savefig(unit + "-hours.png")
 
-        plt.show(block=True)
+        #plt.show(block=True)
+        plt.clf()
 
     def calc_summary(self):
         def updict(d1, d2, activity_times, sub=None):
@@ -411,7 +427,7 @@ class Selfstats:
             if self.need_process:
                 updict(processes, d, timings, sub=row.process.name)
             if self.need_window:
-                updict(windows, d, timings, sub=self.simplify_windows(row.window.title))
+                updict(windows, d, timings, sub=self.simplify_windows(row.process.name, row.window.title))
             updict(sumd, d, timings)
 
             if self.args['key_freqs']:
@@ -427,7 +443,7 @@ class Selfstats:
             if self.need_process:
                 updict(processes, d, timings, sub=click.process.name)
             if self.need_window:
-                updict(windows, d, timings, sub=self.simplify_windows(click.window.title))
+                updict(windows, d, timings, sub=self.simplify_windows(click.process.name, click.window.title))
             updict(sumd, d, timings)
 
         self.processes = processes
@@ -438,16 +454,25 @@ class Selfstats:
         if self.args['key_freqs']:
             self.summary['key_freqs'] = keys
 
-    def simplify_windows(self, name):
+    def simplify_windows(self, klass, win):
         if not hasattr(self, "simplification_rules"):
-            with open(os.path.join(self.args['data_dir'], "simplification_rules.txt"), "r") as f:
-                rules = f.readlines()
+            fn = os.path.join(self.args['data_dir'], "simplification_rules.txt")
+            if not os.path.exists(fn):
+                self.simplification_rules = [(r'^(.*)::(.*)$', '\\1')]
+            else:
                 self.simplification_rules = []
-                for rule in rules:
-                    rule = rule.strip()
-                    src, dst = rule.split(" --> ")
-                    self.simplification_rules.append((re.compile(src),dst))
+                with open(fn, "r") as f:
+                    rules = f.readlines()
+                    for rule in rules:
+                        if rule.startswith("#"):
+                            continue
+                        rule = rule.strip()
+                        if len(rule) == 0:
+                            continue
+                        src, dst = rule.split(" --> ")
+                        self.simplification_rules.append((re.compile(src),dst))
 
+        name = "%s::%s" % (klass, win)
         new_name = name
         for src, dst in self.simplification_rules:
             m = re.match(src, name)
