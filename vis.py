@@ -440,7 +440,7 @@ class Selfstats:
 
     def simplify_windows(self, name):
         if not hasattr(self, "simplification_rules"):
-            with open(os.path.expanduser("~/.selfspy/simplification_rules.txt"), "r") as f:
+            with open(os.path.join(self.args['data_dir'], "simplification_rules.txt"), "r") as f:
                 rules = f.readlines()
                 self.simplification_rules = []
                 for rule in rules:
