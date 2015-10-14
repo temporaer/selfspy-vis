@@ -8,7 +8,7 @@ Install selfspy, then
 Usage
 =====
 
-The script is a modified version of the =selfstats= program. The same options
+The script is a modified version of the `selfstats` program. The same options
 apply. Try e.g.
 
     python vis.py
@@ -21,14 +21,14 @@ chart (all time totals). Both plots are shown for clicks and for keypresses.
 
 It's very likely that long intervals aren't split correctly.
 
-Filtering options of original =selfstats= continue to work.
+Filtering options of original `selfstats` continue to work.
 
 Saving of plots is not yet implemented.
 
 Config
 ======
 
-In  =~/.selfspy/simplification_rules.txt=, add rules of the form:
+In  `~/.selfspy/simplification_rules.txt`, add rules of the form:
 
     ^.*Vimperator.*$ --> Browser
     selfspy : \w+ --> selfspy
