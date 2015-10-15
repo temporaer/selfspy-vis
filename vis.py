@@ -369,28 +369,54 @@ class Selfstats:
             else:
                 Lt[p] = s
 
-        def make_others(D, n=9):
+        def make_others(D, n=5):
             keys = list(x for x in D.keys())
             keys = sorted(keys, key=lambda x: D[x].sum(), reverse=True)
             keys = keys[:n]
-            D2 = D[keys]
+            D2 = D[keys].copy()
 
-            D2['other'] = D[[t for t in D.keys()
-                             if t not in keys]].sum()
+            other_keys = [t for t in D.keys()
+                             if t not in keys]
+            
+            if isinstance(D[other_keys[0]], int):
+                D2['other'] = sum(D[k] for k in other_keys)
+                return D2
+
+            s = D[other_keys[0]]
+            s.name = "other"
+            other = pd.DataFrame(s, index=s.index)
+            for k in other_keys[1:]:
+                s = D[k]
+                s.name = "other"
+                other = pd.merge(other, pd.DataFrame(s), how="outer", left_index=True, right_index=True)
+                #other = pd.merge(other, s, how="outer", left_index=True, right_index=True)
+            other = other.sum(axis=1)
+            #other[0].name = "other"
+            D2['other'] = other
+            # print D2['other']
             return D2
 
-        #from IPython.core.debugger import Tracer; Tracer()()
         df = pd.DataFrame(L, index=idx)
         df = make_others(df[unit])
         df.plot.pie(y=unit)
         plt.savefig(unit + "-total.png")
         plt.clf()
 
+        from matplotlib import dates
+        import numpy as np
+        hfmt = dates.DateFormatter('%m/%d %H:%M')
+
         Lt = [pd.DataFrame({k:v}) for k, v in Lt.iteritems()]
         df = pd.concat(Lt, axis=0)
-        df = df.resample('H', how='sum', label='left')
-        df = make_others(df)
-        df.plot.bar(stacked=True)
+        df = df.resample('30Min', how='sum', label='left')
+        df = df.ix[1:]
+        v = (np.cumsum(df.sum(axis=1).fillna(0))==0).sum()
+        df = df.ix[v:]
+        df = make_others(df) #.dropna(how='all')
+        from IPython.core.debugger import Tracer; Tracer()()
+        df.plot.bar(stacked=True, width=0.95, title=unit)
+        formatted_ticks = df.index.map(lambda t: t.strftime('%m/%d %H:%M'))
+        plt.gca().set_xticklabels(formatted_ticks)
         plt.savefig(unit + "-hours.png")
 
         #plt.show(block=True)
