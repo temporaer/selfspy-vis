@@ -377,6 +377,8 @@ class Selfstats:
 
             other_keys = [t for t in D.keys()
                              if t not in keys]
+            if len(other_keys) < 2:
+                return D
             
             if isinstance(D[other_keys[0]], int):
                 D2['other'] = sum(D[k] for k in other_keys)
@@ -413,7 +415,7 @@ class Selfstats:
         v = (np.cumsum(df.sum(axis=1).fillna(0))==0).sum()
         df = df.ix[v:]
         df = make_others(df) #.dropna(how='all')
-        from IPython.core.debugger import Tracer; Tracer()()
+        #from IPython.core.debugger import Tracer; Tracer()()
         df.plot.bar(stacked=True, width=0.95, title=unit)
         formatted_ticks = df.index.map(lambda t: t.strftime('%m/%d %H:%M'))
         plt.gca().set_xticklabels(formatted_ticks)
