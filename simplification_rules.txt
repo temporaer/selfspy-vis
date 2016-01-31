@@ -1,0 +1,32 @@
+# Example of simplication rules to use with selfspy-vis
+# See https://github.com/Naereen/selfspy-vis
+^\s*::\s*$ --> unknown
+^(.+)::\s*$ --> \1
+^(.+)::.*$ --> \1
+^(.+)::(\w+).*$ --> \1:\2
+^Firefox::.*$ --> Browser
+^Firefox::.*YouTube.*$ --> Browser (YouTube)
+^Firefox::.*Google.*$ --> Browser (Google)
+^Firefox::.*Agenda.*$ --> Browser (Agenda)
+^Firefox::.*GitHub.*$ --> Browser (GitHub)
+^Firefox::.*Bitbucket.*$ --> Browser (Bitbucket)
+^Firefox::.*DuckDuckGo.*$ --> Browser (search)
+^Firefox::.*Messages.*$ --> Mail (Facebook)
+^Firefox::.*Outlook.*$ --> Mail (Outlook)
+^Sublime_text::.*$ --> Sublime Text
+^Sublime_text::.*$ --> Sublime Text
+^vlc::.*$ --> VLC
+^vlc::.*$ --> VLC
+^Evince::.*$ --> PDF Reader
+^Eog::.*$ --> Image Viewer
+^.*Skype.*$ --> Skype
+^.*[tT]erminal.*$ --> Terminal
+^.*bash.*$ --> Bash
+^.*Python.*$ --> Python
+^.*IPython.*$ --> IPython
+^.*[oO]caml.*$ --> OCaml
+^.*Octave.*$ --> Octave
+^.*Owncloud.*$ --> Owncloud
+^.*Orage.*$ --> Calendar
+^.*File-roller.*$ --> Archive viewer
+^.*htop.*$ --> HTop

@@ -1,21 +1,28 @@
-#!/usr/bin/env python
-
-# Copyright 2012 David Fendrich
-
+#!/usr/bin/env python2
+# -*- coding: utf8 -*-
+# Copyright 2012 David Fendrich (Gurgeh)
+# Copyright 2015 Hannes Schulz (temporaer)
+# Copyright 2016 Lilian Besson (Naereen)
+# https://github.com/Naereen/selfspy-vis
+#
 # This file is part of Selfspy
-
+# https://github.com/gurgeh/selfspy
+#
 # Selfspy is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-
+#
 # Selfspy is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-
+#
 # You should have received a copy of the GNU General Public License
 # along with Selfspy.  If not, see <http://www.gnu.org/licenses/>.
+
+# from __future__ import division, print_function
+from __future__ import print_function
 
 import os
 import sys
@@ -43,6 +50,10 @@ from selfspy import models
 import codecs
 sys.stdout = codecs.getwriter('utf8')(sys.stdout)
 
+import numpy as np
+
+
+# Constants
 ACTIVE_SECONDS = 180
 PERIOD_LOOKUP = {'s': 'seconds', 'm': 'minutes', 'h': 'hours', 'd': 'days', 'w': 'weeks'}
 ACTIVITY_ACTIONS = {'active', 'periods', 'pactive', 'tactive', 'ratios'}
@@ -98,8 +109,8 @@ def make_time_string(dates, clock):
         if type(dates[0]) is str:
             datesstr = " ".join(dates)
         else:
-            print '%s is of uncompatible type list of %s.' % (
-                dates[0], str(type(dates[0])))
+            print('%s is of uncompatible type list of %s.' % (
+                dates[0], str(type(dates[0]))))
     elif isinstance(dates, basestring):
         datesstr = dates
     else:
@@ -107,7 +118,7 @@ def make_time_string(dates, clock):
     dates = datesstr.split()  # any whitespace
 
     if len(dates) > 3:
-        print 'Max three arguments to date', dates
+        print('Max three arguments to date', dates)
         sys.exit(1)
 
     try:
@@ -131,14 +142,14 @@ def make_time_string(dates, clock):
                 else:
                     now = now.replace(year=now.year - 1, month=12)
     except ValueError:
-        print 'Malformed date', dates
+        print('Malformed date', dates)
         sys.exit(1)
 
     if clock:
         try:
             hour, minute = [int(v) for v in clock.split(':')]
         except ValueError:
-            print 'Malformed clock', clock
+            print('Malformed clock', clock)
             sys.exit(1)
 
         now = now.replace(hour=hour, minute=minute, second=0)
@@ -150,19 +161,19 @@ def make_time_string(dates, clock):
 
 
 def make_period(q, period, who, start, prop):
-    if isinstance(period, list) and len(period)>0:
+    if isinstance(period, list) and len(period) > 0:
         if type(period[0]) is str:
             periodstr = "".join(period)
         else:
-            print '%s is of uncompatible type list of %s.' % (who, str(type(period[0])))
+            print('%s is of uncompatible type list of %s.' % (who, str(type(period[0]))))
     elif isinstance(period, basestring):
         periodstr = period.translate(None, " \t")
     else:
-        print '%s is of uncompatible type %s.' % (who, str(type(period)))
+        print('%s is of uncompatible type %s.' % (who, str(type(period))))
         sys.exit(1)
     pmatch = re.match("(\d+)(["+"".join(PERIOD_LOOKUP.keys())+"]?)", periodstr)
-    if pmatch==None:
-        print '%s has an unrecognizable format: %s' % (who, periodstr)
+    if pmatch is None:
+        print('%s has an unrecognizable format: %s' % (who, periodstr))
         sys.exit(1)
     period = [pmatch.group(1)]+([pmatch.group(2)] if pmatch.group(2) else [])
 
@@ -172,7 +183,7 @@ def make_period(q, period, who, start, prop):
         d['hours'] = val
     else:
         if period[1] not in PERIOD_LOOKUP:
-            print '--limit unit "%s" not one of %s' % (period[1], PERIOD_LOOKUP.keys())
+            print('--limit unit "%s" not one of %s' % (period[1], PERIOD_LOOKUP.keys()))
             sys.exit(1)
         d[PERIOD_LOOKUP[period[1]]] = val
 
@@ -225,7 +236,7 @@ class Selfstats:
         cutoff = [self.args[k] for k in ACTIVITY_ACTIONS if self.args[k]]
         if cutoff:
             if any(c != cutoff[0] for c in cutoff):
-                print 'You must give the same time argument to the different parameters in the --active family, when you use several in the same query.'
+                print('You must give the same time argument to the different parameters in the --active family, when you use several in the same query.')
                 sys.exit(1)
             self.need_activity = cutoff[0]
             self.need_timings = True
@@ -243,14 +254,14 @@ class Selfstats:
             try:
                 reg = re.compile(self.args[name], re.I)
             except re.error, e:
-                print 'Error in regular expression', str(e)
+                print('Error in regular expression', str(e))
                 sys.exit(1)
 
             for x in self.session.query(table).all():
                 if reg.search(x.__getattribute__(source_prop)):
                     ids.append(x.id)
             if not self.inmouse:
-                print '%d %s matched' % (len(ids), names)
+                print('%d %s matched' % (len(ids), names))
             if ids:
                 q = q.filter(target_prop.in_(ids))
             else:
@@ -298,7 +309,7 @@ class Selfstats:
             try:
                 bodrex = re.compile(self.args['body'], re.I)
             except re.error, e:
-                print 'Error in regular expression', str(e)
+                print('Error in regular expression', str(e))
                 sys.exit(1)
             for x in q.all():
                 if(self.need_humanreadable):
@@ -323,25 +334,25 @@ class Selfstats:
     def show_rows(self):
         fkeys = self.filter_keys()
         rows = 0
-        print '<RowID> <Starting date and time> <Duration> <Process> <Window title> <Number of keys pressed>',
+        print('<RowID> <Starting date and time> <Duration> <Process> <Window title> <Number of keys pressed>',)
         if self.args['showtext'] and self.need_humanreadable:
-            print '<Decrypted Human Readable text>'
+            print('<Decrypted Human Readable text>')
         elif self.args['showtext']:
-            print '<Decrypted text>'
+            print('<Decrypted text>')
         else:
             print
 
         for row in fkeys:
             rows += 1
-            print row.id, row.started, pretty_seconds((row.created_at - row.started).total_seconds()), row.process.name, '"%s"' % row.window.title, row.nrkeys,
+            print(row.id, row.started, pretty_seconds((row.created_at - row.started).total_seconds()), row.process.name, '"%s"' % row.window.title, row.nrkeys,)
             if self.args['showtext']:
                 if self.need_humanreadable:
-                    print row.decrypt_humanreadable().decode('utf8')
+                    print(row.decrypt_humanreadable().decode('utf8'))
                 else:
-                    print row.decrypt_text().decode('utf8')
+                    print(row.decrypt_text().decode('utf8'))
             else:
                 print
-        print rows, 'rows'
+        print(rows, 'rows')
 
     def click_pie(self, stats, unit='clicks'):
         import pandas as pd
@@ -362,7 +373,7 @@ class Selfstats:
                 dt = datetime.datetime.fromtimestamp(int(t1))
                 dates.append(dt)
                 values.append(t2-t1)
-            #s = pd.Series(values, index=pd.to_datetime(dates))
+            # s = pd.Series(values, index=pd.to_datetime(dates))
             s = pd.Series(values, index=dates)
             if p in Lt:
                 Lt[p] = pd.concat((Lt[p], s))
@@ -376,10 +387,10 @@ class Selfstats:
             D2 = D[keys].copy()
 
             other_keys = [t for t in D.keys()
-                             if t not in keys]
+                          if t not in keys]
             if len(other_keys) < 2:
                 return D
-            
+
             if isinstance(D[other_keys[0]], int):
                 D2['other'] = sum(D[k] for k in other_keys)
                 return D2
@@ -391,37 +402,39 @@ class Selfstats:
                 s = D[k]
                 s.name = "other"
                 other = pd.merge(other, pd.DataFrame(s), how="outer", left_index=True, right_index=True)
-                #other = pd.merge(other, s, how="outer", left_index=True, right_index=True)
+                # other = pd.merge(other, s, how="outer", left_index=True, right_index=True)
             other = other.sum(axis=1)
-            #other[0].name = "other"
+            # other[0].name = "other"
             D2['other'] = other
-            # print D2['other']
+            # print(D2['other'])
             return D2
 
         df = pd.DataFrame(L, index=idx)
         df = make_others(df[unit])
-        df.plot.pie(y=unit)
+        df.plot(kind='pie', y=unit)
         plt.savefig(unit + "-total.png")
         plt.clf()
 
-        from matplotlib import dates
-        import numpy as np
-        hfmt = dates.DateFormatter('%m/%d %H:%M')
+        from matplotlib import dates as mpldates
 
-        Lt = [pd.DataFrame({k:v}) for k, v in Lt.iteritems()]
+        hfmt = mpldates.DateFormatter('%m/%d %H:%M')
+
+        Lt = [pd.DataFrame({k: v}) for k, v in Lt.iteritems()]
         df = pd.concat(Lt, axis=0)
         df = df.resample('30Min', how='sum', label='left')
         df = df.ix[1:]
-        v = (np.cumsum(df.sum(axis=1).fillna(0))==0).sum()
+        v = (np.cumsum(df.sum(axis=1).fillna(0)) == 0).sum()
         df = df.ix[v:]
-        df = make_others(df) #.dropna(how='all')
-        #from IPython.core.debugger import Tracer; Tracer()()
-        df.plot.bar(stacked=True, width=0.95, title=unit)
+        df = make_others(df)  # .dropna(how='all')
+        # from IPython.core.debugger import Tracer; Tracer()()
+        df.plot(kind='bar', stacked=True, width=0.95, title=unit)
         formatted_ticks = df.index.map(lambda t: t.strftime('%m/%d %H:%M'))
         plt.gca().set_xticklabels(formatted_ticks)
-        plt.savefig(unit + "-hours.png")
+        outfile = unit + "-hours.png"
+        print("Saving to %s..." % outfile)
+        plt.savefig(outfile)
 
-        #plt.show(block=True)
+        # plt.show(block=True)
         plt.clf()
 
     def calc_summary(self):
@@ -498,7 +511,7 @@ class Selfstats:
                         if len(rule) == 0:
                             continue
                         src, dst = rule.split(" --> ")
-                        self.simplification_rules.append((re.compile(src),dst))
+                        self.simplification_rules.append((re.compile(src), dst))
 
         name = "%s::%s" % (klass, win)
         new_name = name
@@ -510,9 +523,9 @@ class Selfstats:
         return new_name
 
     def show_summary(self):
-        print '%d keystrokes in %d key sequences,' % (self.summary.get('keystrokes', 0), self.summary.get('nr', 0)),
-        print '%d clicks (%d excluding scroll),' % (self.summary.get('clicks', 0), self.summary.get('noscroll_clicks', 0)),
-        print '%d mouse movements' % (self.summary.get('mousings', 0))
+        print('%d keystrokes in %d key sequences,' % (self.summary.get('keystrokes', 0), self.summary.get('nr', 0)),)
+        print('%d clicks (%d excluding scroll),' % (self.summary.get('clicks', 0), self.summary.get('noscroll_clicks', 0)),)
+        print('%d mouse movements' % (self.summary.get('mousings', 0)))
         print
 
         if self.need_activity:
@@ -522,67 +535,67 @@ class Selfstats:
                 act = act.calc_total()
             else:
                 act = 0
-            print 'Total time active:',
-            print pretty_seconds(act)
+            print('Total time active:',)
+            print(pretty_seconds(act))
             print
 
         if self.args['clicks']:
-            print 'Mouse clicks:'
+            print('Mouse clicks:')
             for key, name in BUTTON_MAP:
-                print self.summary.get(key, 0), name
+                print(self.summary.get(key, 0), name)
             print
 
         if self.args['key_freqs']:
-            print 'Key frequencies:'
+            print('Key frequencies:')
             for key, val in self.summary['key_freqs'].most_common():
-                print key, val
+                print(key, val)
             print
 
         if self.args['pkeys']:
-            print 'Processes sorted by keystrokes:'
+            print('Processes sorted by keystrokes:')
             pdata = self.processes.items()
             pdata.sort(key=lambda x: x[1].get('keystrokes', 0), reverse=True)
             for name, data in pdata:
-                print name, data.get('keystrokes', 0)
+                print(name, data.get('keystrokes', 0))
             print
 
         if self.args['tkeys']:
-            print 'Window titles sorted by keystrokes:'
+            print('Window titles sorted by keystrokes:')
             wdata = self.windows.items()
             wdata.sort(key=lambda x: x[1].get('keystrokes', 0), reverse=True)
             for name, data in wdata:
-                print name, data.get('keystrokes', 0)
+                print(name, data.get('keystrokes', 0))
             print
 
         if self.args['pactive']:
-            print 'Processes sorted by activity:'
+            print('Processes sorted by activity:')
             for p in self.processes.values():
                 p['active_time'] = int(p['activity'].calc_total())
             pdata = self.processes.items()
             pdata.sort(key=lambda x: x[1]['active_time'], reverse=True)
             for name, data in pdata:
-                print '%s, %s' % (name, pretty_seconds(data['active_time']))
+                print('%s, %s' % (name, pretty_seconds(data['active_time'])))
             print
 
         if self.args['tactive']:
-            print 'Window titles sorted by activity:'
+            print('Window titles sorted by activity:')
             for w in self.windows.values():
                 w['active_time'] = int(w['activity'].calc_total())
             wdata = self.windows.items()
             wdata.sort(key=lambda x: x[1]['active_time'], reverse=True)
             for name, data in wdata:
-                print '%s, %s' % (name, pretty_seconds(data['active_time']))
+                print('%s, %s' % (name, pretty_seconds(data['active_time'])))
             print
 
         if self.args['periods']:
             if 'activity' in self.summary:
-                print 'Active periods:'
+                print('Active periods:')
                 for t1, t2 in self.summary['activity'].times:
                     d1 = datetime.datetime.fromtimestamp(t1).replace(microsecond=0)
                     d2 = datetime.datetime.fromtimestamp(t2).replace(microsecond=0)
-                    print '%s - %s' % (d1.isoformat(' '), str(d2.time()).split('.')[0])
+                    print('%s - %s' % (d1.isoformat(' '), str(d2.time()).split('.')[0]))
             else:
-                print 'No active periods.'
+                print('No active periods.')
             print
 
         if self.args['ratios']:
@@ -592,11 +605,11 @@ class Selfstats:
             mousings = tryget('mousings')
             clicks = tryget('clicks')
             keys = tryget('keystrokes')
-            print 'Keys / Clicks: %.1f' % (keys / clicks)
-            print 'Active seconds / Keys: %.1f' % (act / keys)
+            print('Keys / Clicks: %.1f' % (keys / clicks))
+            print('Active seconds / Keys: %.1f' % (act / keys))
             print
-            print 'Mouse movements / Keys: %.1f' % (mousings / keys)
-            print 'Mouse movements / Clicks: %.1f' % (mousings / clicks)
+            print('Mouse movements / Keys: %.1f' % (mousings / keys))
+            print('Mouse movements / Clicks: %.1f' % (mousings / clicks))
             print
 
 
@@ -611,7 +624,7 @@ def parse_config():
     defaults = {}
     if args.config:
         if not os.path.exists(args.config):
-            raise  EnvironmentError("Config file %s doesn't exist." % args.config)
+            raise EnvironmentError("Config file %s doesn't exist." % args.config)
         config = ConfigParser.SafeConfigParser()
         config.read([args.config])
         defaults = dict(config.items('Defaults') + config.items("Selfstats"))
@@ -670,7 +683,7 @@ def main():
     try:
         args = vars(parse_config())
     except EnvironmentError as e:
-        print str(e)
+        print(str(e))
         sys.exit(1)
 
     args['data_dir'] = os.path.expanduser(args['data_dir'])
@@ -688,7 +701,7 @@ def main():
         models.ENCRYPTER = make_encrypter(args['password'])
 
         if not check_password.check(args['data_dir'], models.ENCRYPTER, read_only=True):
-            print 'Password failed'
+            print('Password failed')
             sys.exit(1)
 
     ss.do()
