@@ -1,0 +1,20 @@
+git-complete-stats.sh: do statistics on this git repository.
+  From https://github.com/esc/git-stats/
+
+Number of commits per author:
+     12	 Hannes Schulz
+     2	 Lilian Besson
+
+----------------------
+Statistics for: Hannes
+  - Number of files changed: 12
+  - Number of lines added: 1572
+  - Number of lines deleted: 95
+  - Number of merges: 0
+
+----------------------
+Statistics for: Lilian
+  - Number of files changed: 8
+  - Number of lines added: 798
+  - Number of lines deleted: 713
+  - Number of merges: 0
