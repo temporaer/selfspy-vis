@@ -8,7 +8,7 @@ Install [selfspy](https://github.com/gurgeh/selfspy), then the requirements with
 The script is a modified version of the [`selfstats` program](https://github.com/gurgeh/selfspy#example-statistics).
 The same options apply. Try e.g.
 
-    python vis.py
+    $ python selfvis.py
 
 ## Status
 Currently implemented is a breakdown of hours (stacked bar chart) and a pie
@@ -17,27 +17,36 @@ respectively.
 
 It's very likely that long intervals aren't split correctly.
 
+## Options
 Filtering options of original `selfstats` continue to work.
+[See here](https://github.com/gurgeh/selfspy#selfstats-reference).
 
 ----
 
 ## Examples
-For example, run
+For example, add [selfvis.py](./selfvis.py) in your PATH, and then run:
 
-    selfvis.py --human-readable --pactive
-    selfvis.py --human-readable --ratios
+    $ selfvis.py --human-readable --pactive
+
+Or:
+
+    $ selfvis.py --human-readable --ratios
 
 ### Clicks
+#### Last hours (bar chart)
 ![Clicks Hours](clicks-hours.png)
 
+#### Total (pie chart)
 ![Clicks Total](clicks-total.png)
 
 ### Keystrokes
+#### Last hours (bar chart)
 ![Keystrokes Hours](keystrokes-hours.png)
 
+#### Total (pie chart)
 ![Keystrokes Total](keystrokes-total.png)
 
-### Processes
+### Other visualizations
 > Not yet.
 
 ----
