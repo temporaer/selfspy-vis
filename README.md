@@ -107,7 +107,7 @@ See [this example](./simplification_rules.txt) for the rules I like.
 
 ## About
 ### Authors?
-- Forked by: [Lilian Besson (Naereen)](https://github.com/Naereen/),
+- [Forked by](https://github.com/Naereen/selfspy-vis/): [Lilian Besson (Naereen)](https://github.com/Naereen/),
 - Original author: [Hannes Schulz (temporaer)](https://github.com/temporaer/selfspy-vis).
 
 ### License?
