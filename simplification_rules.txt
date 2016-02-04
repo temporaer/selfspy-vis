@@ -22,6 +22,7 @@
 ^.*Skype.*$ --> Skype
 ^.*[tT]erminal.*$ --> Terminal
 ^.*bash.*$ --> Bash
+^.*Nano.*$ --> Nano
 ^.*Python.*$ --> Python
 ^.*IPython.*$ --> IPython
 ^.*[oO]caml.*$ --> OCaml

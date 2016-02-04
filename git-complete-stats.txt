@@ -14,7 +14,7 @@ Statistics for: Hannes
 
 ----------------------
 Statistics for: Lilian
-  - Number of files changed: 8
-  - Number of lines added: 798
-  - Number of lines deleted: 713
+  - Number of files changed: 10
+  - Number of lines added: 929
+  - Number of lines deleted: 757
   - Number of merges: 0
