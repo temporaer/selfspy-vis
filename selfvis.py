@@ -1,35 +1,38 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf8 -*-
-# Copyright 2012 David Fendrich (Gurgeh)
-# Copyright 2015 Hannes Schulz (temporaer)
-# Copyright 2016 Lilian Besson (Naereen)
-# https://github.com/Naereen/selfspy-vis
-#
-# This file is part of Selfspy
-# https://github.com/gurgeh/selfspy
-#
-# Selfspy is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# Selfspy is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with Selfspy.  If not, see <http://www.gnu.org/licenses/>.
+"""
+selfspy-vis
 
-# from __future__ import division, print_function
-from __future__ import print_function
+Copyright 2012 David Fendrich (Gurgeh)
+Copyright 2015 Hannes Schulz (temporaer)
+Copyright 2016 Lilian Besson (Naereen)
+https://github.com/Naereen/selfspy-vis
+
+This file is part of Selfspy
+https://github.com/gurgeh/selfspy
+
+Selfspy is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Selfspy is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Selfspy.  If not, see <http://www.gnu.org/licenses/>.
+"""
+
+from __future__ import division, print_function, absolute_import
 
 import os
 import sys
 import re
 import datetime
 import time
-import seaborn as sns
+# import seaborn as sns
 
 import argparse
 import ConfigParser
@@ -106,7 +109,8 @@ def make_time_string(dates, clock):
         dates = []
 
     if isinstance(dates, list) and len(dates) > 0:
-        if type(dates[0]) is str:
+        # if type(dates[0]) is str:
+        if isinstance(dates[0], str):
             datesstr = " ".join(dates)
         else:
             print('%s is of uncompatible type list of %s.' % (
@@ -171,11 +175,11 @@ def make_period(q, period, who, start, prop):
     else:
         print('%s is of uncompatible type %s.' % (who, str(type(period))))
         sys.exit(1)
-    pmatch = re.match("(\d+)(["+"".join(PERIOD_LOOKUP.keys())+"]?)", periodstr)
+    pmatch = re.match(r"(\d+)([" + "".join(PERIOD_LOOKUP.keys()) + "]?)", periodstr)
     if pmatch is None:
         print('%s has an unrecognizable format: %s' % (who, periodstr))
         sys.exit(1)
-    period = [pmatch.group(1)]+([pmatch.group(2)] if pmatch.group(2) else [])
+    period = [pmatch.group(1)] + ([pmatch.group(2)] if pmatch.group(2) else [])
 
     d = {}
     val = int(period[0])
@@ -204,7 +208,7 @@ def create_times(row):
     return abs_times
 
 
-class Selfstats:
+class Selfstats(object):
     def __init__(self, db_name, args):
         self.args = args
         self.session_maker = models.initialize(db_name)
@@ -312,7 +316,7 @@ class Selfstats:
                 print('Error in regular expression', str(e))
                 sys.exit(1)
             for x in q.all():
-                if(self.need_humanreadable):
+                if self.need_humanreadable:
                     body = x.decrypt_humanreadable()
                 else:
                     body = x.decrypt_text()
@@ -340,7 +344,7 @@ class Selfstats:
         elif self.args['showtext']:
             print('<Decrypted text>')
         else:
-            print
+            print()
 
         for row in fkeys:
             rows += 1
@@ -351,7 +355,7 @@ class Selfstats:
                 else:
                     print(row.decrypt_text().decode('utf8'))
             else:
-                print
+                print()
         print(rows, 'rows')
 
     def click_pie(self, stats, unit='clicks'):
@@ -372,7 +376,7 @@ class Selfstats:
             for t1, t2 in k['activity'].times:
                 dt = datetime.datetime.fromtimestamp(int(t1))
                 dates.append(dt)
-                values.append(t2-t1)
+                values.append(t2 - t1)
             # s = pd.Series(values, index=pd.to_datetime(dates))
             s = pd.Series(values, index=dates)
             if p in Lt:
@@ -526,7 +530,7 @@ class Selfstats:
         print('%d keystrokes in %d key sequences,' % (self.summary.get('keystrokes', 0), self.summary.get('nr', 0)),)
         print('%d clicks (%d excluding scroll),' % (self.summary.get('clicks', 0), self.summary.get('noscroll_clicks', 0)),)
         print('%d mouse movements' % (self.summary.get('mousings', 0)))
-        print
+        print()
 
         if self.need_activity:
             act = self.summary.get('activity')
@@ -537,19 +541,19 @@ class Selfstats:
                 act = 0
             print('Total time active:',)
             print(pretty_seconds(act))
-            print
+            print()
 
         if self.args['clicks']:
             print('Mouse clicks:')
             for key, name in BUTTON_MAP:
                 print(self.summary.get(key, 0), name)
-            print
+            print()
 
         if self.args['key_freqs']:
             print('Key frequencies:')
             for key, val in self.summary['key_freqs'].most_common():
                 print(key, val)
-            print
+            print()
 
         if self.args['pkeys']:
             print('Processes sorted by keystrokes:')
@@ -557,7 +561,7 @@ class Selfstats:
             pdata.sort(key=lambda x: x[1].get('keystrokes', 0), reverse=True)
             for name, data in pdata:
                 print(name, data.get('keystrokes', 0))
-            print
+            print()
 
         if self.args['tkeys']:
             print('Window titles sorted by keystrokes:')
@@ -565,7 +569,7 @@ class Selfstats:
             wdata.sort(key=lambda x: x[1].get('keystrokes', 0), reverse=True)
             for name, data in wdata:
                 print(name, data.get('keystrokes', 0))
-            print
+            print()
 
         if self.args['pactive']:
             print('Processes sorted by activity:')
@@ -575,7 +579,7 @@ class Selfstats:
             pdata.sort(key=lambda x: x[1]['active_time'], reverse=True)
             for name, data in pdata:
                 print('%s, %s' % (name, pretty_seconds(data['active_time'])))
-            print
+            print()
 
         if self.args['tactive']:
             print('Window titles sorted by activity:')
@@ -585,7 +589,7 @@ class Selfstats:
             wdata.sort(key=lambda x: x[1]['active_time'], reverse=True)
             for name, data in wdata:
                 print('%s, %s' % (name, pretty_seconds(data['active_time'])))
-            print
+            print()
 
         if self.args['periods']:
             if 'activity' in self.summary:
@@ -596,7 +600,7 @@ class Selfstats:
                     print('%s - %s' % (d1.isoformat(' '), str(d2.time()).split('.')[0]))
             else:
                 print('No active periods.')
-            print
+            print()
 
         if self.args['ratios']:
             def tryget(prop):
@@ -607,10 +611,10 @@ class Selfstats:
             keys = tryget('keystrokes')
             print('Keys / Clicks: %.1f' % (keys / clicks))
             print('Active seconds / Keys: %.1f' % (act / keys))
-            print
+            print()
             print('Mouse movements / Keys: %.1f' % (mousings / keys))
             print('Mouse movements / Clicks: %.1f' % (mousings / clicks))
-            print
+            print()
 
 
 def parse_config():
