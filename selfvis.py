@@ -257,7 +257,7 @@ class Selfstats(object):
             ids = []
             try:
                 reg = re.compile(self.args[name], re.I)
-            except re.error, e:
+            except re.error as e:
                 print('Error in regular expression', str(e))
                 sys.exit(1)
 
@@ -312,7 +312,7 @@ class Selfstats(object):
         if self.args['body']:
             try:
                 bodrex = re.compile(self.args['body'], re.I)
-            except re.error, e:
+            except re.error as e:
                 print('Error in regular expression', str(e))
                 sys.exit(1)
             for x in q.all():
