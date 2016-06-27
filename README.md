@@ -1,13 +1,13 @@
 # Visualization for selfspy | Plots for selfstats
 ## Examples
-### *Clicks*
+### :mouse: *Clicks*
 #### Last hours (*bar* chart)
 ![Clicks Hours](clicks-hours.png)
 
 #### Total (*pie* chart)
 ![Clicks Total](clicks-total.png)
 
-### *Keystrokes*
+### :musical_keyboard: *Keystrokes*
 #### Last hours (*bar* chart)
 ![Keystrokes Hours](keystrokes-hours.png)
 
@@ -15,7 +15,7 @@
 ![Keystrokes Total](keystrokes-total.png)
 
 ### Other visualizations
-> Not yet.
+> Not yet :santa:.
 
 ----
 
@@ -55,13 +55,13 @@ Both plots are saved for [clicks](clicks-total.png) and for [keypresses](keystro
 
 It's very likely that long intervals aren't split correctly.
 
-## Options
+## :wrench: Options
 Filtering options of original `selfstats` continue to work.
 [See here](https://github.com/gurgeh/selfspy#selfstats-reference).
 
 ----
 
-## Config
+## :memo: Config
 In  `~/.selfspy/simplification_rules.txt`, add rules of the form
 ``regexp --> name``
 
@@ -86,7 +86,7 @@ See [this example](./simplification_rules.txt) for the rules I like.
 
 ----
 
-## FAQ
+## FAQ :mag:
 #### Q: *Is there a nice webpage to display the graphs?*
 > A: Yes, use [this HTML file](./selfvis.html), **host it locally**.
 
@@ -100,15 +100,19 @@ See [this example](./simplification_rules.txt) for the rules I like.
 #### Q: *Is it supposed to be that slow?*
 > A: Yup, don't expect your graphs to be produced in two seconds, it can take up-to 15 seconds.
 
+> A: Note: You can use an option to shorten the time window used for the plot: for instance ``selfvis.py --back 8 h`` only uses the data from the last 8h.
+
 #### Q: *Can I ...?*
 > A: Yes, as long as you respect [the terms of the GPLv3 License](./LICENSE).
 
 ----
 
-## About
-### Authors?
+## :information_desk_person: About
+### :pencil: Authors?
 - [Forked by](https://github.com/Naereen/selfspy-vis/): [Lilian Besson (Naereen)](https://github.com/Naereen/),
 - Original author: [Hannes Schulz (temporaer)](https://github.com/temporaer/selfspy-vis).
 
-### License?
+### :scroll: License?
 [GPL v3](./LICENSE).
+
+[![Analytics](https://ga-beacon.appspot.com/UA-38514290-17/github.com/Naereen/selfspy-vis/README.md?pixel)](https://github.com/Naereen/selfspy-vis/)
