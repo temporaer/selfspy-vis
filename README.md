@@ -17,6 +17,8 @@
 ### Other visualizations
 > Not yet :santa:.
 
+[![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
+
 ----
 
 ## Command line
@@ -112,7 +114,19 @@ See [this example](./simplification_rules.txt) for the rules I like.
 - [Forked by](https://github.com/Naereen/selfspy-vis/): [Lilian Besson (Naereen)](https://github.com/Naereen/),
 - Original author: [Hannes Schulz (temporaer)](https://github.com/temporaer/selfspy-vis).
 
-### :scroll: License?
-[GPL v3](./LICENSE).
+## :scroll: License ? [![GitHub license](https://img.shields.io/github/license/Naereen/selfspy-vis.svg)](https://github.com/Naereen/selfspy-vis/blob/master/LICENSE)
+[GPLv3 Licensed](http://perso.crans.org/besson/LICENSE.html) (file [LICENSE.txt](LICENSE.txt)).
+© [Lilian Besson](https://GitHub.com/Naereen), 2016-17.
 
-[![Analytics](https://ga-beacon.appspot.com/UA-38514290-17/github.com/Naereen/selfspy-vis/README.md?pixel)](https://github.com/Naereen/selfspy-vis/)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-no-red.svg)](https://GitHub.com/Naereen/selfspy-vis/graphs/commit-activity)
+[![Ask Me Anything !](https://img.shields.io/badge/Ask%20me-anything-1abc9c.svg)](https://GitHub.com/Naereen/ama)
+[![Analytics](https://ga-beacon.appspot.com/UA-38514290-17/github.com/Naereen/selfspy-vis/README.md?pixel)](https://GitHub.com/Naereen/selfspy-vis/)
+
+[![ForTheBadge built-with-swag](http://ForTheBadge.com/images/badges/built-with-swag.svg)](https://GitHub.com/Naereen/)
+
+[![ForTheBadge uses-badges](http://ForTheBadge.com/images/badges/uses-badges.svg)](http://ForTheBadge.com)
+[![ForTheBadge uses-git](http://ForTheBadge.com/images/badges/uses-git.svg)](https://GitHub.com/)
+
+[![ForTheBadge uses-html](http://ForTheBadge.com/images/badges/uses-html.svg)](http://ForTheBadge.com)
+[![ForTheBadge uses-css](http://ForTheBadge.com/images/badges/uses-css.svg)](http://ForTheBadge.com)
+[![ForTheBadge uses-js](http://ForTheBadge.com/images/badges/uses-js.svg)](http://ForTheBadge.com)
