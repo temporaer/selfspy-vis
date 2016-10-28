@@ -109,14 +109,21 @@ See [this example](./simplification_rules.txt) for the rules I like.
 
 ----
 
+## Other [self-quantified projects](http://perso.crans.org/besson/self-quantified.en.html) ?
+- [uLogMe](https://GitHub.com/Naereen/uLogMe/): keep track of your computer activity throughout the day: visualize your active window titles and the number and frequency of keystrokes, in beautiful and responsive HTML timelines.
+- [Munin](http://munin-monitoring.org/), can also help to keep track of the uptime (and many more stats) of your (Linux) machine. See [these plugins I wrote for my Munin](https://github.com/Naereen/My-Munin-plugins).
+- My minimalist dashboard, generated every hour (with [a `crontab` file](https://help.ubuntu.com/community/CronHowto)), with this bash script [`GenerateStatsMarkdown.sh`](https://bitbucket.org/lbesson/bin/src/master/GenerateStatsMarkdown.sh).
+
+----
+
 ## :information_desk_person: About
 ### :pencil: Authors?
 - [Forked by](https://github.com/Naereen/selfspy-vis/): [Lilian Besson (Naereen)](https://github.com/Naereen/),
 - Original author: [Hannes Schulz (temporaer)](https://github.com/temporaer/selfspy-vis).
 
 ## :scroll: License ? [![GitHub license](https://img.shields.io/github/license/Naereen/selfspy-vis.svg)](https://github.com/Naereen/selfspy-vis/blob/master/LICENSE)
-[GPLv3 Licensed](http://perso.crans.org/besson/LICENSE.html) (file [LICENSE.txt](LICENSE.txt)).
-© [Lilian Besson](https://GitHub.com/Naereen), 2016-17.
+[GPLv3 Licensed](http://perso.crans.org/besson/LICENSE.html) (file [LICENSE](LICENSE)).
+© [Lilian Besson](https://GitHub.com/Naereen), 2016.
 
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-no-red.svg)](https://GitHub.com/Naereen/selfspy-vis/graphs/commit-activity)
 [![Ask Me Anything !](https://img.shields.io/badge/Ask%20me-anything-1abc9c.svg)](https://GitHub.com/Naereen/ama)
