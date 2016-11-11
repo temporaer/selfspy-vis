@@ -385,7 +385,7 @@ class Selfstats(object):
             else:
                 Lt[p] = s
 
-        def make_others(D, n=5):
+        def make_others(D, n=7):
             if 'other' in D.keys():
                 D = D.drop('other', 1)
             keys = list(x for x in D.keys())
@@ -415,6 +415,7 @@ class Selfstats(object):
 
             return D2
 
+        # from IPython.core.debugger import Tracer; Tracer()()
         df = pd.DataFrame(L, index=idx)
         df = make_others(df[unit])
         df.plot(kind='pie', y=unit)
@@ -430,6 +431,8 @@ class Selfstats(object):
         df = pd.concat(Lt, axis=0)
         df = make_others(df)
         df['all'] = df.sum(axis=1)
+        for k in df.columns:
+            df[k] = pd.to_timedelta(df[k], unit='s')
         # plot the timeline, maybe join close events later
         fig, ax = plt.subplots(1,1)
         gxmin, gxmax = df.index.min(), df.index.max()
@@ -439,10 +442,10 @@ class Selfstats(object):
             if len(s) < 2:
                 continue
             xmin = np.array(pd.Series(s.index))
-            xmax = xmin + pd.Series([pd.Timedelta(seconds=i) for i in s])
-            gxmax = max(gxmax, xmax.max())
+            xmax = xmin + np.array(s)
+            # http://stackoverflow.com/questions/13703720/converting-between-datetime-timestamp-and-datetime64
+            gxmax = max(gxmax, datetime.datetime.utcfromtimestamp(xmax.max().astype(int) * 1e-9))
             xmax = np.array(xmax)
-            # from IPython.core.debugger import Tracer; Tracer()()
             y = np.ones(len(xmin))*idx
             plt.hlines(y, xmin, xmax, lw=4, color=c)
         ax.xaxis_date()
@@ -450,16 +453,24 @@ class Selfstats(object):
         ax.xaxis.set_major_formatter(myFmt)
         ax.xaxis.set_major_locator(HourLocator(interval=1))
         plt.yticks(np.arange(len(df.columns)), df.columns)
-        plt.xlim(gxmin, gxmax)
+        #plt.xlim(gxmin, gxmax)
         plt.ylim(-1, len(df.columns))
         plt.savefig(unit + '-timeline.png')
-        plt.close(fig)
+        plt.clf()
         df.drop('all', 1, inplace=True)
 
+        (df.groupby(df.index.hour).sum().astype('timedelta64[s]')/3600000).plot(kind='bar', stacked=True, width=0.95, title="Average day " + unit)
+        outfile = unit + "-avgday.png"
+        plt.xlabel('hour of the day')
+        plt.ylabel('accumulated time (hours)')
+        plt.savefig(outfile)
+        plt.clf()
+
+        df = df.astype('timedelta64[s]')/3600000
         df = df.resample(self.args['resample'], label='left').sum()
-        df = df.ix[1:]
-        v = (np.cumsum(df.sum(axis=1).fillna(0)) == 0).sum()
-        df = df.ix[v:]
+        #df = df.ix[1:]
+        #v = (np.cumsum(df.sum(axis=1).fillna(0)) == 0).sum()
+        #df = df.ix[v:]
         df = make_others(df)  # .dropna(how='all')
         # from IPython.core.debugger import Tracer; Tracer()()
         df.plot(kind='bar', stacked=True, width=0.95, title=unit)
