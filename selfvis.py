@@ -418,7 +418,7 @@ class Selfstats(object):
         # from IPython.core.debugger import Tracer; Tracer()()
         df = pd.DataFrame(L, index=idx)
         df = make_others(df[unit])
-        df.plot(kind='pie', y=unit)
+        df.plot(kind='pie', y=unit, color=sns.color_palette("Set2", len(df.columns)))
         plt.savefig(unit + "-total.png")
         plt.clf()
 
@@ -449,17 +449,24 @@ class Selfstats(object):
             y = np.ones(len(xmin))*idx
             plt.hlines(y, xmin, xmax, lw=4, color=c)
         ax.xaxis_date()
-        myFmt = DateFormatter('%M/%d:%H')
+        myFmt = DateFormatter('%h %d %H')
         ax.xaxis.set_major_formatter(myFmt)
-        ax.xaxis.set_major_locator(HourLocator(interval=1))
+        #ax.xaxis.set_major_locator(HourLocator(interval=1))
         plt.yticks(np.arange(len(df.columns)), df.columns)
+        labels = ax.get_xticklabels()
+        plt.setp(labels, rotation=30, fontsize=10)
         #plt.xlim(gxmin, gxmax)
         plt.ylim(-1, len(df.columns))
         plt.savefig(unit + '-timeline.png')
         plt.clf()
         df.drop('all', 1, inplace=True)
 
-        (df.groupby(df.index.hour).sum().astype('timedelta64[s]')/3600000).plot(kind='bar', stacked=True, width=0.95, title="Average day " + unit)
+        # sometimes, this becomes "O" for some reason
+        df2 = df.groupby(df.index.hour).sum()
+        for k in df2.columns:
+            df2[k] =  pd.to_timedelta(df2[k])
+        (df2.astype('timedelta64[s]')/3600000).plot(kind='bar', stacked=True, width=0.95, title="Average day " + unit,
+                    color=sns.color_palette("Set2", len(df.columns)))
         outfile = unit + "-avgday.png"
         plt.xlabel('hour of the day')
         plt.ylabel('accumulated time (hours)')
@@ -473,7 +480,7 @@ class Selfstats(object):
         #df = df.ix[v:]
         df = make_others(df)  # .dropna(how='all')
         # from IPython.core.debugger import Tracer; Tracer()()
-        df.plot(kind='bar', stacked=True, width=0.95, title=unit)
+        df.plot(kind='bar', stacked=True, width=0.95, title=unit, color=sns.color_palette("Set2", len(df.columns)))
         formatted_ticks = df.index.map(lambda t: t.strftime('%m/%d %H:%M'))
         plt.gca().set_xticklabels(formatted_ticks)
         outfile = unit + "-hours.png"
@@ -537,7 +544,7 @@ class Selfstats(object):
         self.windows = windows
         self.summary = sumd
         self.click_pie(windows, 'keystrokes')
-        self.click_pie(windows, 'clicks')
+        #self.click_pie(windows, 'clicks')
         if self.args['key_freqs']:
             self.summary['key_freqs'] = keys
 
