@@ -386,32 +386,33 @@ class Selfstats(object):
                 Lt[p] = s
 
         def make_others(D, n=5):
+            if 'other' in D.keys():
+                D = D.drop('other', 1)
             keys = list(x for x in D.keys())
             keys = sorted(keys, key=lambda x: D[x].sum(), reverse=True)
             keys = keys[:n]
-            D2 = D[keys].copy()
 
             other_keys = [t for t in D.keys()
                           if t not in keys]
+
             if len(other_keys) < 2:
                 return D
 
             if isinstance(D[other_keys[0]], int):
+                D2 = D[keys].copy()
                 D2['other'] = sum(D[k] for k in other_keys)
                 return D2
 
             s = D[other_keys[0]]
-            s.name = "other"
-            other = pd.DataFrame(s, index=s.index)
             for k in other_keys[1:]:
-                s = D[k]
-                s.name = "other"
-                other = pd.merge(other, pd.DataFrame(s), how="outer", left_index=True, right_index=True)
-                # other = pd.merge(other, s, how="outer", left_index=True, right_index=True)
-            other = other.sum(axis=1)
-            # other[0].name = "other"
-            D2['other'] = other
-            # print(D2['other'])
+                s = pd.concat((s, D[k]))
+                continue
+            D2 = D.join(pd.DataFrame(dict(other=s)))
+
+            keys += 'other',
+
+            D2 = D2[keys]
+
             return D2
 
         df = pd.DataFrame(L, index=idx)
@@ -427,6 +428,8 @@ class Selfstats(object):
 
         Lt = [pd.DataFrame({k: v}) for k, v in Lt.iteritems()]
         df = pd.concat(Lt, axis=0)
+        df = make_others(df)
+        df['all'] = df.sum(axis=1)
         # plot the timeline, maybe join close events later
         fig, ax = plt.subplots(1,1)
         gxmin, gxmax = df.index.min(), df.index.max()
@@ -445,7 +448,7 @@ class Selfstats(object):
         ax.xaxis_date()
         myFmt = DateFormatter('%M/%d:%H')
         ax.xaxis.set_major_formatter(myFmt)
-        ax.xaxis.set_major_locator(HourLocator(interval=4))
+        ax.xaxis.set_major_locator(HourLocator(interval=1))
         plt.yticks(np.arange(len(df.columns)), df.columns)
         plt.xlim(gxmin, gxmax)
         plt.ylim(-1, len(df.columns))
