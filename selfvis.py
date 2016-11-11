@@ -425,7 +425,7 @@ class Selfstats(object):
 
         Lt = [pd.DataFrame({k: v}) for k, v in Lt.iteritems()]
         df = pd.concat(Lt, axis=0)
-        df = df.resample('30Min', how='sum', label='left')
+        df = df.resample(self.args['resample'], how='sum', label='left')
         df = df.ix[1:]
         v = (np.cumsum(df.sum(axis=1).fillna(0)) == 0).sum()
         df = df.ix[v:]
@@ -644,6 +644,8 @@ def parse_config():
     parser.add_argument('-C', '--clock', type=str, help='Time to start the listing or summarizing from. Given in 24 hour format as --clock 13:25. If no --date is given, interpret the time as today if that results in sometimes in the past, otherwise as yesterday.')
 
     parser.add_argument('-i', '--id', type=int, help='Which row ID to start the listing or summarizing from. If --date and/or --clock is given, this option is ignored.')
+
+    parser.add_argument('--resample', default='30Min', help='resample interval (how much one bar represents in the bar plot)')
 
     parser.add_argument('-b', '--back', nargs='+', type=str, help='--back <period> [<unit>] Start the listing or summary this much back in time. Use this as an alternative to --date, --clock and --id. If any of those are given, this option is ignored. <unit> is either "s" (seconds), "m" (minutes), "h" (hours), "d" (days) or "w" (weeks). If no unit is given, it is assumed to be hours.')
 
