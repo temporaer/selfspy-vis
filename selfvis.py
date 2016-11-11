@@ -418,7 +418,7 @@ class Selfstats(object):
         # from IPython.core.debugger import Tracer; Tracer()()
         df = pd.DataFrame(L, index=idx)
         df = make_others(df[unit])
-        df.plot(kind='pie', y=unit, color=sns.color_palette("Set2", len(df.columns)))
+        df.plot(kind='pie', y=unit, color=sns.color_palette("Set2", len(df.index)))
         plt.savefig(unit + "-total.png")
         plt.clf()
 
