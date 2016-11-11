@@ -32,7 +32,7 @@ import sys
 import re
 import datetime
 import time
-# import seaborn as sns
+import seaborn as sns
 
 import argparse
 import ConfigParser
@@ -363,6 +363,7 @@ class Selfstats(object):
         import matplotlib.pyplot as plt
         import matplotlib
         matplotlib.interactive(False)
+        sns.set_style("white")
         L = []
         idx = []
         Lt = {}
@@ -420,12 +421,38 @@ class Selfstats(object):
         plt.clf()
 
         from matplotlib import dates as mpldates
+        from matplotlib.dates import DateFormatter, MinuteLocator, SecondLocator, HourLocator
 
         hfmt = mpldates.DateFormatter('%m/%d %H:%M')
 
         Lt = [pd.DataFrame({k: v}) for k, v in Lt.iteritems()]
         df = pd.concat(Lt, axis=0)
-        df = df.resample(self.args['resample'], how='sum', label='left')
+        # plot the timeline, maybe join close events later
+        fig, ax = plt.subplots(1,1)
+        gxmin, gxmax = df.index.min(), df.index.max()
+        pal = sns.color_palette("Set2", len(df.columns))
+        for idx, (col, c) in enumerate(zip(df.columns, pal)):
+            s = df[col].dropna()
+            if len(s) < 2:
+                continue
+            xmin = np.array(pd.Series(s.index))
+            xmax = xmin + pd.Series([pd.Timedelta(seconds=i) for i in s])
+            gxmax = max(gxmax, xmax.max())
+            xmax = np.array(xmax)
+            # from IPython.core.debugger import Tracer; Tracer()()
+            y = np.ones(len(xmin))*idx
+            plt.hlines(y, xmin, xmax, lw=4, color=c)
+        ax.xaxis_date()
+        myFmt = DateFormatter('%M/%d:%H')
+        ax.xaxis.set_major_formatter(myFmt)
+        ax.xaxis.set_major_locator(HourLocator(interval=4))
+        plt.yticks(np.arange(len(df.columns)), df.columns)
+        plt.xlim(gxmin, gxmax)
+        plt.ylim(-1, len(df.columns))
+        plt.savefig(unit + '-timeline.png')
+        plt.close(fig)
+
+        df = df.resample(self.args['resample'], label='left').sum()
         df = df.ix[1:]
         v = (np.cumsum(df.sum(axis=1).fillna(0)) == 0).sum()
         df = df.ix[v:]
