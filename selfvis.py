@@ -454,6 +454,7 @@ class Selfstats(object):
         plt.ylim(-1, len(df.columns))
         plt.savefig(unit + '-timeline.png')
         plt.close(fig)
+        df.drop('all', 1, inplace=True)
 
         df = df.resample(self.args['resample'], label='left').sum()
         df = df.ix[1:]
