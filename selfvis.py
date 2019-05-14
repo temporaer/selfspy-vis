@@ -731,7 +731,7 @@ def make_encrypter(password):
     if password == "":
         encrypter = None
     else:
-        encrypter = Blowfish.new(hashlib.md5(password).digest())
+        encrypter = Blowfish.new(hashlib.md5(password).digest(), Blowfish.MODE_ECB)
     return encrypter
 
 
